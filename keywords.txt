@@ -1,0 +1,26 @@
+#######################################
+# Syntax Coloring Map For Arduino_KNN
+####################################### 
+# Class
+#######################################
+
+Arduino_KNN	KEYWORD1
+KNNClassifier	KEYWORD1
+
+#######################################
+# Methods and Functions 
+#######################################	
+
+addExample	KEYWORD2
+classify	KEYWORD2
+confidence	KEYWORD2
+
+clearClass	KEYWORD2
+clearAllClasses	KEYWORD2
+
+getCountByClass	KEYWORD2
+getCount	KEYWORD2
+
+#######################################
+# Constants
+#######################################
