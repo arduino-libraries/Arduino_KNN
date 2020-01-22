@@ -76,7 +76,7 @@ void loop() {
   Serial.print(",");
   Serial.print(greenPercentage);
   Serial.print(",");
-  Serial.println(greenPercentage);
+  Serial.println(bluePercentage);
 
   // Put sample data into an array ready to pass to the k-NN classifier
   float input[] = {redPercentage, greenPercentage, bluePercentage};
