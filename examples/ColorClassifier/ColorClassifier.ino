@@ -3,20 +3,23 @@
   k-NN color classification
   -------------------------
 
-  This sketch classifies objects using a color sensor. 
-  
-  First you 'teach' the Arduino by putting an example of each object close to the color sensor. 
-  After this the Arduino will guess the name of objects it is shown based on how similar 
+  This sketch classifies objects using a color sensor.
+
+  First you 'teach' the Arduino by putting an example of each object close to the color sensor.
+  After this the Arduino will guess the name of objects it is shown based on how similar
   the color is to the previous examples it was shown.
-    
+
   This example uses a simple case of k-Nearest Neighbour (k-NN) algorithm where k=1.
 
   HARDWARE: Arduino Nano BLE Sense
 
-  USAGE: Follow prompts in serial console. Move object close to sample, then move it away
+  USAGE: Follow prompts in serial console. Move object close to sample, then move it away. 
+  
+  Works best in a well lit area with objects of different colors.
+
 
   This example code is in the public domain.
-  
+
 */
 
 #include <Arduino_KNN.h>
@@ -113,31 +116,37 @@ void loop() {
       Serial.println(label[classification]);
       break;
   }
-  
+
   Serial.println("");
 }
 
-
+// Samples the brightest color seen while an object is close
 void readColor(float color[]) {
-  // Read the color and proximity sensor
   int red, green, blue, proximity, total;
+  int brightestTotal = 0;
+  
   while (1) {
     if (APDS.colorAvailable() && APDS.proximityAvailable()) {
+      // Read color and proximity 
       APDS.readColor(red, green, blue);
       total = (red + green + blue);
       proximity = APDS.readProximity();
 
-      // Wait until an object is close and there's enough light
-      if (proximity == 0 && total > 3) {
+      // If an object is close and color is brightest we've seen so far
+      if (total > brightestTotal && proximity == 0) {
+        // Normalise the color sample data and save it
+        color[0] = (float)red / total;
+        color[1] = (float)green / total;
+        color[2] = (float)blue / total;
+        brightestTotal = total;
+      }
+
+      // Wait until we have a color and the object moves away again
+      if (brightestTotal > 3 && proximity > 0) {
         break;
       }
     }
   }
-
-  // Normalise the color sample data and put into color Input
-  color[0] = (float)red / total;
-  color[1] = (float)green / total;
-  color[2] = (float)blue / total;
 
   // Print the red, green and blue percentage values
   Serial.print(color[0]);
@@ -145,9 +154,6 @@ void readColor(float color[]) {
   Serial.print(color[1]);
   Serial.print(",");
   Serial.println(color[2]);
-
-  // Wait for the object to move away again
-  while (!APDS.proximityAvailable() || APDS.readProximity() == 0) {}
 }
 
 
