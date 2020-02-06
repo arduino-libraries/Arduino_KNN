@@ -13,9 +13,11 @@
 
   HARDWARE: Arduino Nano BLE Sense
 
-  USAGE: Follow prompts in serial console. Move object close to sample, then move it away.
+  USAGE: Follow prompts in serial console. Move object close to the board to sample its color, then move it away.
 
   Works best in a well lit area with objects of different colors.
+
+  NOTE: Make sure Serial Monitor's line ending setting is configured for "Newline" or "Both NL & CR".
 
 
   This example code is in the public domain.
@@ -25,28 +27,26 @@
 #include <Arduino_KNN.h>
 #include <Arduino_APDS9960.h>
 
-const int  INPUTS = 3; // Classifier input is color sensor data; red, green and blue levels
-const int  CLASSES = 3; // Number of objects we will classify (e.g. Apple, Banana, Orange)
-const int  EXAMPLES_PER_CLASS = 1; // Number of times user needs to show examples for each object
-
-// Create a new KNNClassifier
-KNNClassifier myKNN(INPUTS);
+const int INPUTS = 3; // Classifier input is color sensor data; red, green and blue levels
+const int CLASSES = 3; // Number of objects we will classify (e.g. Apple, Banana, Orange)
+const int EXAMPLES_PER_CLASS = 1; // Number of times user needs to show examples for each object
 
 // K=1 means the classifier looks for the single closest color example it's seen previously
 const int K = 1;
 
+// Create a new KNNClassifier
+KNNClassifier myKNN(INPUTS);
+
 // Names for each class (object type)
-String label [CLASSES];
+String label[CLASSES];
 
 // Array to store data to pass to the KNN library
-float color [INPUTS];
+float color[INPUTS];
 
 // Threshold for color brightness
-const int threshold = 5;
+const int THRESHOLD = 5;
 
 void setup() {
-  int currentClass = 0;
-  int currentExample = 0;
 
   Serial.begin(9600);
   while (!Serial);
@@ -59,13 +59,13 @@ void setup() {
   Serial.println("Arduino k-NN color classifier");
 
   // Ask user for the name of each object
-  for (currentClass = 0; currentClass < CLASSES; currentClass++) {
+  for (int currentClass = 0; currentClass < CLASSES; currentClass++) {
 
     Serial.println("Enter an object name:");
     label[currentClass] = readName();
 
-    // Ask use to show examples of each object
-    for (currentExample = 0; currentExample < EXAMPLES_PER_CLASS; currentExample++) {
+    // Ask user to show examples of each object
+    for (int currentExample = 0; currentExample < EXAMPLES_PER_CLASS; currentExample++) {
 
       Serial.print("Show me an example ");
       Serial.println(label[currentClass]);
@@ -98,26 +98,23 @@ void loop() {
 
   // Print the classification
   Serial.println(label[classification]);
-  Serial.println("");
+  Serial.println();
 
 }
 
 
 void readColor(float color[]) {
-  int red, green, blue, proximity, colorTotal;
+  int red, green, blue, proximity, colorTotal = 0;
 
-  while (1) {
-    if (APDS.colorAvailable() && APDS.proximityAvailable()) {
+  // Wait until we have a color bright enough
+  while (colorTotal < THRESHOLD) {
+
+    // Sample if color is available and object is close
+    if (APDS.colorAvailable() && APDS.proximityAvailable() && APDS.readProximity() == 0) {
 
       // Read color and proximity
       APDS.readColor(red, green, blue);
       colorTotal = (red + green + blue);
-      proximity = APDS.readProximity();
-
-      // Wait until we have an object close and a color bright enough
-      if (proximity == 0 && colorTotal > threshold) {
-        break;
-      }
     }
   }
 
