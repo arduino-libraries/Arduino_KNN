@@ -22,9 +22,9 @@
 #include <Arduino_KNN.h>
 #include <Arduino_APDS9960.h>
 
-const int  INPUTS = 3; // color sensor values; red, green and blue
+const int  INPUTS = 3; // Classifier input is color sensor data; red, green and blue levels
 const int  CLASSES = 3; // Number of objects we will classify (e.g. Apple, Banana, Orange)
-const int  EXAMPLES_PER_CLASS = 1; // Number of times the users has to shown an example of an object
+const int  EXAMPLES_PER_CLASS = 1; // Number of times user needs to show examples for each object
 
 // Create a new KNNClassifier
 KNNClassifier myKNN(INPUTS);
@@ -77,7 +77,6 @@ void loop() {
         currentClass = 0;
         State = GET_EXAMPLES;
       }
-
       break;
 
     case GET_EXAMPLES:
@@ -113,12 +112,8 @@ void loop() {
       // print the classification
       Serial.println(label[classification]);
       break;
-
-    default:
-      // statements
-      break;
   }
-
+  
   Serial.println("");
 }
 
