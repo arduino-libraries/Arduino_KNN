@@ -9,7 +9,7 @@
   After this the Arduino will guess the name of objects it is shown based on how similar
   the color is to the examples it has seen.
 
-  This example uses a simple case of k-Nearest Neighbour (k-NN) algorithm where k=1.
+  This example uses a case of k-Nearest Neighbour (k-NN) algorithm where k=5.
 
   HARDWARE: Arduino Nano BLE Sense
 
@@ -17,9 +17,7 @@
 
   Works best in a well lit area with objects of different colors.
 
-  NOTE: Make sure Serial Monitor's line ending setting is configured for "Newline" or "Both NL & CR".
-
-
+ 
   This example code is in the public domain.
 
 */
@@ -29,16 +27,15 @@
 
 const int INPUTS = 3; // Classifier input is color sensor data; red, green and blue levels
 const int CLASSES = 3; // Number of objects we will classify (e.g. Apple, Banana, Orange)
-const int EXAMPLES_PER_CLASS = 1; // Number of times user needs to show examples for each object
+const int EXAMPLES_PER_CLASS = 30; // Number of times user needs to show examples for each object
 
-// K=1 means the classifier looks for the single closest color example it's seen previously
-const int K = 1;
+const int K = 5;
 
 // Create a new KNNClassifier
 KNNClassifier myKNN(INPUTS);
 
 // Names for each class (object type)
-String label[CLASSES];
+String      label[CLASSES] = {"Apple", "Lime", "Orange"};
 
 // Array to store data to pass to the KNN library
 float color[INPUTS];
@@ -61,9 +58,7 @@ void setup() {
   // Ask user for the name of each object
   for (int currentClass = 0; currentClass < CLASSES; currentClass++) {
 
-    Serial.println("Enter an object name:");
-    label[currentClass] = readName();
-
+  
     // Ask user to show examples of each object
     for (int currentExample = 0; currentExample < EXAMPLES_PER_CLASS; currentExample++) {
 
@@ -77,6 +72,8 @@ void setup() {
       myKNN.addExample(color, currentClass);
 
     }
+      // Wait for the object to move away again
+  while (!APDS.proximityAvailable() || APDS.readProximity() == 0) {}
   }
 }
 
@@ -97,20 +94,23 @@ void loop() {
   classification = myKNN.classify(color, K);
 
   // Print the classification
+  Serial.print("You showed me ");
   Serial.println(label[classification]);
-  Serial.println();
-
+ 
 }
 
 
 void readColor(float color[]) {
   int red, green, blue, proximity, colorTotal = 0;
 
+ // Wait for the object to move close
+ while (!APDS.proximityAvailable() || APDS.readProximity() > 0){}
+
   // Wait until we have a color bright enough
   while (colorTotal < THRESHOLD) {
 
     // Sample if color is available and object is close
-    if (APDS.colorAvailable() && APDS.proximityAvailable() && APDS.readProximity() == 0) {
+    if (APDS.colorAvailable()) {
 
       // Read color and proximity
       APDS.readColor(red, green, blue);
@@ -129,27 +129,4 @@ void readColor(float color[]) {
   Serial.print(color[1]);
   Serial.print(",");
   Serial.println(color[2]);
-}
-
-
-// reads a name from the Serial Monitor
-String readName() {
-  String line;
-
-  while (1) {
-    if (Serial.available()) {
-      char c = Serial.read();
-
-      if (c == '\r') {
-        // ignore
-        continue;
-      } else if (c == '\n') {
-        break;
-      }
-
-      line += c;
-    }
-  }
-
-  return line;
 }
