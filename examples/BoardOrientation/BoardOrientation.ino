@@ -2,7 +2,7 @@
   KNN - Board Orientation
 
   This example presents the user with the option to either
-  classify or train the boards current orientation as one of 
+  classify or train the board's current orientation as one of 
   6 categories using a KNN classifier. The IMU's acceleration sensor
   is used as input.
 
@@ -10,7 +10,7 @@
         is configured for "Newline" or "Both NL & CR".
 
   The circuit:
-  - Arduino Nano 33 BLE or Arduino Nano 33 BLE Sensor
+  - Arduino Nano 33 BLE or Arduino Nano 33 BLE Sense
 
   This example code is in the public domain.
 */

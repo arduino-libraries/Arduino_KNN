@@ -1,12 +1,12 @@
 /*
   SimpleKNN
 
-  This example demonstrates how to use the Arduino KNN library.
+  This example demonstrates how to use the Arduino_KNN library.
 
-  It creates a KNN classifier that expects an input array of 2 (floats).
+  It creates a KNN classifier that expects an input array of 2 floats.
   Then adds 4 example inputs with their respective classifications.
   After this it demonstrates how to classify an input value and get
-  the classifications confidence.
+  the classification's confidence.
 
   This example code is in the public domain.
 */

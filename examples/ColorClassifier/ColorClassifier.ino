@@ -1,6 +1,5 @@
 /*
-
-  k-NN color classification
+  KNN color classification
   -------------------------
 
   This sketch classifies objects using a color sensor.
@@ -9,7 +8,7 @@
   After this the Arduino will guess the name of objects it is shown based on how similar
   the color is to the examples it has seen.
 
-  This example uses a case of k-Nearest Neighbour (k-NN) algorithm where k=5.
+  This example uses a case of k-Nearest Neighbour (KNN) algorithm where k=5.
 
   HARDWARE: Arduino Nano BLE Sense
 
@@ -19,7 +18,6 @@
 
  
   This example code is in the public domain.
-
 */
 
 #include <Arduino_KNN.h>
@@ -49,11 +47,11 @@ void setup() {
   while (!Serial);
 
   if (!APDS.begin()) {
-    Serial.println("Failled to initialized APDS!");
+    Serial.println("Failed to initialize APDS!");
     while (1);
   }
 
-  Serial.println("Arduino k-NN color classifier");
+  Serial.println("Arduino KNN color classifier");
 
   // Ask user for the name of each object
   for (int currentClass = 0; currentClass < CLASSES; currentClass++) {
@@ -68,7 +66,7 @@ void setup() {
       // Wait for an object then read its color
       readColor(color);
 
-      // Add example color to the k-NN model
+      // Add example color to the KNN model
       myKNN.addExample(color, currentClass);
 
     }
