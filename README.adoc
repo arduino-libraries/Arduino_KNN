@@ -1,3 +1,5 @@
+_Note: This library is no longer maintained by Arduino and has therefore been archived. If you are interested in maintaining it, please write an email to support@arduino.cc._
+
 :repository-owner: arduino-libraries
 :repository-name: Arduino_KNN
 
